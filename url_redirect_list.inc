@@ -3,6 +3,9 @@
 function url_redirect_list_form($form, &$form_state) {
   global $base_url;
   $form = array();
+  $form['goto_list'] = array(
+    '#markup' => l(t('Add Url Redirect'), 'admin/config/administration/url_redirect'),
+  );
   $form['path'] = array(
     '#title' => t('Path'),
     '#type' => 'textfield',
@@ -35,12 +38,23 @@ function url_redirect_list_form($form, &$form_state) {
   $output = '';
   foreach ($result as $url) {
     $edit = $base_url . '/admin/config/administration/url_redirect/edit?path=' . $url->path;
-    $delete = $base_url . '/admin/config/administration/url_redirect/delete?path=' . $url->redirect_path;
+    $delete = $base_url . '/admin/config/administration/url_redirect/delete?path=' . $url->path;
     $row[] = $url->path;
     $row[] = $url->redirect_path;
     $row[] = $url->check_for;
     if ($url->roles) {
-      $row[] = $url->check_for;
+      $roles_names = array_keys((array) json_decode($url->roles));
+      $roles = '';
+      foreach ($roles_names as $rid) {
+        $rolename = db_select('role', 'r');
+        $rolename->fields('r', array('name'));
+        $rolename->condition('rid', $rid);
+        $roleresult = $rolename->execute()->fetchField();
+        if ($roleresult) {
+          $roles .= $roleresult . '(' . $rid . ')' . ', ';
+        }
+      }
+      $row[] = rtrim($roles, ', ');
     }
     else {
       $row[] = 'N/A';
@@ -62,7 +76,12 @@ function url_redirect_list_form($form, &$form_state) {
     else {
       $row[] = 'N/A';
     }
-    $row[] = $url->status;
+    if ($url->status == 1) {
+      $row[] = 'Enabled';
+    }
+    else {
+      $row[] = 'Disabled';
+    }
     $row[] = '<a href="' . $edit . '">Edit</a>';
     $row[] = '<a href="' . $delete . '">Delete</a>';
     $rows[] = $row;

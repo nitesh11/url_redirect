@@ -14,6 +14,14 @@ function url_redirect_permission() {
       'title' => t('Access URL REDIRECT Settings'),
       'description' => t('Url Redirect page.'),
     ),
+    'access url redirect edit page' => array(
+      'title' => t('Access URL REDIRECT Edit Page'),
+      'description' => t('Url Redirect Edit page.'),
+    ),
+    'access url redirect delete page' => array(
+      'title' => t('Access URL REDIRECT Delete'),
+      'description' => t('Url Redirect delete page.'),
+    ),
   );
 }
 
@@ -31,7 +39,7 @@ function url_redirect_menu() {
     'access arguments' => array('access url redirect settings page'),
     'type' => MENU_NORMAL_ITEM,
   );
-   $items['admin/config/administration/url_redirect/list'] = array(
+  $items['admin/config/administration/url_redirect/list'] = array(
     'title' => 'List URL Redirect',
     'description' => 'Url Redirect add',
     'page callback' => 'drupal_get_form',
@@ -50,12 +58,12 @@ function url_redirect_menu() {
     'type' => MENU_SUGGESTED_ITEM,
   );
   $items['admin/config/administration/url_redirect/delete'] = array(
-    'title' => 'Appointment Calendar Date Delete',
-    'description' => 'Delete Appointment Calendar',
+    'title' => 'Url Redirect Delete',
+    'description' => 'Delete Url Redirect',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('appointment_calendar_list_delete_form'),
-    'file' => 'appointment_calendar_delete.inc',
-    'access arguments' => array('access appointment calendar delete page'),
+    'page arguments' => array('url_redirect_delete_form'),
+    'file' => 'url_redirect_delete.inc',
+    'access arguments' => array('access url redirect delete page'),
     'type' => MENU_SUGGESTED_ITEM,
   );
   return $items;
@@ -113,6 +121,14 @@ function _path_check($path) {
   $query->fields('u');
   $query->condition('path', $path, '=');
   $query->condition('status', 1, '=');
+  $result = $query->execute()->fetchAssoc();
+  return $result;
+}
+
+function _path_edit($path) {
+  $query = db_select('url_redirect', 'u');
+  $query->fields('u');
+  $query->condition('path', $path, '=');
   $result = $query->execute()->fetchAssoc();
   return $result;
 }
