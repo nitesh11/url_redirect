@@ -1,5 +1,5 @@
 name = URL Redirect
-description = "Redirect User / Role for specific menu item."
+description = Redirect User / Role for specific menu item.
 package = Other
 core = 7.x
 

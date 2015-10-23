@@ -2,22 +2,24 @@
  * @file
  * Url Redirect javascript functions.
  */
+(function($) {
+  Drupal.behaviors.url_redirect = {
+    attach: function (context, settings) {
 
-Drupal.behaviors.url_redirect = {
-    attach: function (context) {
-        jQuery(".form-item-roles").hide();
-        jQuery(".users-checkbox").hide();
-        jQuery("#edit-checked-for-role").change(function () {
-            if (this.checked) {
-                jQuery(".form-item-roles").show();
-                jQuery(".users-checkbox").hide();
-            }
-        });
-        jQuery("#edit-checked-for-user").change(function () {
-            if (this.checked) {
-                jQuery(".users-checkbox").show();
-                jQuery(".form-item-roles").hide();
-            }
-        });
+      $(".form-item-roles").hide();
+      $(".users-checkbox").hide();
+      $("#edit-checked-for-role").change(function () {
+        if (this.checked) {
+          $(".form-item-roles").show();
+          $(".users-checkbox").hide();
+        }
+      });
+      $("#edit-checked-for-user").change(function () {
+        if (this.checked) {
+          $(".users-checkbox").show();
+          $(".form-item-roles").hide();
+        }
+      });
     }
-};
+  };
+})(jQuery);

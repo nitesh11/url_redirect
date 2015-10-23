@@ -52,12 +52,3 @@ function url_redirect_schema() {
   );
   return $schema;
 }
-
-/**
- * Implements hook_unistall().
- */
-function url_redirect_uninstall_schema() {
-  if (db_table_exists('url_redirect')) {
-    db_drop_table('url_redirect');
-  }
-}

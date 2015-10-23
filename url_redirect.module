@@ -11,15 +11,15 @@
 function url_redirect_permission() {
   return array(
     'access url redirect settings page' => array(
-      'title' => t('Access URL REDIRECT Settings'),
+      'title' => t('Access URL Redirect Settings'),
       'description' => t('Url Redirect page.'),
     ),
     'access url redirect edit page' => array(
-      'title' => t('Access URL REDIRECT Edit Page'),
+      'title' => t('Access URL Redirect Edit Page'),
       'description' => t('Url Redirect Edit page.'),
     ),
     'access url redirect delete page' => array(
-      'title' => t('Access URL REDIRECT Delete'),
+      'title' => t('Access URL Redirect Delete'),
       'description' => t('Url Redirect delete page.'),
     ),
   );
@@ -35,7 +35,7 @@ function url_redirect_menu() {
     'description' => 'Configuration Page for Url Redirect',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('url_redirect_settings_form'),
-    'file' => 'url_redirect_admin_settings.inc',
+    'file' => 'url_redirect.admin.inc',
     'access arguments' => array('access url redirect settings page'),
     'type' => MENU_NORMAL_ITEM,
   );
@@ -100,30 +100,36 @@ function url_redirect_page_build(&$page) {
 }
 
 /**
- * Fecth Usernames with ID's for Select List.
+ * Fetch list of all the users.
  */
 function _user_fetch() {
-  $query = db_select('users', 'u');
-  $query->fields('u', array('uid', 'name'));
-  $query->orderBy('name');
-  $query->condition('uid', 0, '!=');
+  $query = db_select('users', 'u')
+    ->fields('u', array('uid', 'name'))
+    ->condition('uid', 0, '!=')
+    ->orderBy('name');
   $result = $query->execute()->fetchAllKeyed();
   return $result;
 }
 
+/**
+ * Checking the path.
+ */
 function _path_check($path) {
-  $query = db_select('url_redirect', 'u');
-  $query->fields('u');
-  $query->condition('path', $path, '=');
-  $query->condition('status', 1, '=');
+  $query = db_select('url_redirect', 'u')
+    ->fields('u')
+    ->condition('path', $path, '=')
+    ->condition('status', 1, '=');
   $result = $query->execute()->fetchAssoc();
   return $result;
 }
 
+/**
+ * Edit the path.
+ */
 function _path_edit($path) {
-  $query = db_select('url_redirect', 'u');
-  $query->fields('u');
-  $query->condition('path', $path, '=');
+  $query = db_select('url_redirect', 'u')
+    ->fields('u')
+    ->condition('path', $path, '=');
   $result = $query->execute()->fetchAssoc();
   return $result;
 }

@@ -24,8 +24,8 @@ function url_redirect_list_form($form, &$form_state) {
     '#type' => 'submit',
     '#value' => 'Reset',
   );
-  $query = db_select('url_redirect', 'u');
-  $query->fields('u');
+  $query = db_select('url_redirect', 'u')
+    ->fields('u');
   if (!empty($_GET['path'])) {
     $query->condition('path', $_GET['path'], '=');
   }
@@ -46,9 +46,9 @@ function url_redirect_list_form($form, &$form_state) {
       $roles_names = array_keys((array) json_decode($url->roles));
       $roles = '';
       foreach ($roles_names as $rid) {
-        $rolename = db_select('role', 'r');
-        $rolename->fields('r', array('name'));
-        $rolename->condition('rid', $rid);
+        $rolename = db_select('role', 'r')
+          ->fields('r', array('name'))
+          ->condition('rid', $rid);
         $roleresult = $rolename->execute()->fetchField();
         if ($roleresult) {
           $roles .= $roleresult . '(' . $rid . ')' . ', ';
@@ -63,9 +63,9 @@ function url_redirect_list_form($form, &$form_state) {
       $user_names = array_keys((array) json_decode($url->users));
       $names = '';
       foreach ($user_names as $uid) {
-        $username = db_select('users', 'u');
-        $username->fields('u', array('name'));
-        $username->condition('uid', $uid);
+        $username = db_select('users', 'u')
+          ->fields('u', array('name'))
+          ->condition('uid', $uid);
         $user_result = $username->execute()->fetchField();
         if ($user_result) {
           $names .= $user_result . '(' . $uid . ')' . ', ';
@@ -92,12 +92,12 @@ function url_redirect_list_form($form, &$form_state) {
     $chunks = array_chunk($rows, $per_page, TRUE);
     $output = theme('table', array('header' => $header, 'rows' => $chunks[$current_page]));
     $output .= theme('pager', array('quantity', count($rows)));
-    $form['ouptut'] = array(
+    $form['output'] = array(
       '#markup' => $output,
     );
   }
   else {
-    $form['ouptut'] = array(
+    $form['output'] = array(
       '#markup' => t('No Paths available.'),
     );
   }

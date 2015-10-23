@@ -18,7 +18,7 @@ function url_redirect_delete_form($form, &$form_state) {
     return $form;
   }
   else {
-    drupal_set_message('Path Specified is not correct for delete.', 'error');
+    drupal_set_message('Path specified is not correct for deletion.', 'error');
   }
 }
 
@@ -29,8 +29,8 @@ function url_redirect_delete_form_submit($form, &$form_state) {
   if ($form_state['values']['op'] == 'Delete') {
     $delete_path = check_plain($_GET['path']);
     db_delete('url_redirect')
-        ->condition('path', $delete_path)
-        ->execute();
+      ->condition('path', $delete_path)
+      ->execute();
     drupal_set_message(t("The path '@path' is Deletes.", array('@path' => $delete_path)));
     drupal_goto('admin/config/administration/url_redirect/list');
   }
