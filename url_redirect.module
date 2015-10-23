@@ -1,0 +1,118 @@
+<?php
+
+/**
+ * @file
+ * Adds URL Redirect and UI to set paths to redirect.
+ */
+
+/**
+ * Implements hook_permission().
+ */
+function url_redirect_permission() {
+  return array(
+    'access url redirect settings page' => array(
+      'title' => t('Access URL REDIRECT Settings'),
+      'description' => t('Url Redirect page.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function url_redirect_menu() {
+  $items = array();
+  $items['admin/config/administration/url_redirect'] = array(
+    'title' => 'URL Redirect',
+    'description' => 'Configuration Page for Url Redirect',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('url_redirect_settings_form'),
+    'file' => 'url_redirect_admin_settings.inc',
+    'access arguments' => array('access url redirect settings page'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+   $items['admin/config/administration/url_redirect/list'] = array(
+    'title' => 'List URL Redirect',
+    'description' => 'Url Redirect add',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('url_redirect_list_form'),
+    'file' => 'url_redirect_list.inc',
+    'access arguments' => array('access url redirect settings page'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['admin/config/administration/url_redirect/edit'] = array(
+    'title' => 'URL Redirect Edit',
+    'description' => 'Edit URL Redirect',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('url_redirect_edit_form'),
+    'file' => 'url_redirect_edit.inc',
+    'access arguments' => array('access url redirect edit page'),
+    'type' => MENU_SUGGESTED_ITEM,
+  );
+  $items['admin/config/administration/url_redirect/delete'] = array(
+    'title' => 'Appointment Calendar Date Delete',
+    'description' => 'Delete Appointment Calendar',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('appointment_calendar_list_delete_form'),
+    'file' => 'appointment_calendar_delete.inc',
+    'access arguments' => array('access appointment calendar delete page'),
+    'type' => MENU_SUGGESTED_ITEM,
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_page_build().
+ */
+function url_redirect_page_build(&$page) {
+  global $user;
+  $path = $_GET['q'];
+  $path_check = _path_check($path);
+  if ($path_check) {
+    $check_for = $path_check['check_for'];
+    if ($check_for == 'Role') {
+      $role_check = (array) json_decode($path_check['roles']);
+      $role_check_array = array_keys($role_check);
+      $user_role_check_array = array_keys($user->roles);
+      $checked_result = array_intersect($role_check_array, $user_role_check_array);
+      if ($checked_result) {
+        drupal_goto($path_check['redirect_path']);
+      }
+    }
+    else if ($check_for == 'User') {
+      $user_check = (array) json_decode($path_check['users']);
+      $user_check_array = array_keys($user_check);
+      $uid = array($user->uid);
+      $checked_user_result = array_intersect($user_check_array, $uid);
+      if ($checked_user_result) {
+        drupal_goto($path_check['redirect_path']);
+      }
+    }
+  }
+}
+
+/**
+ * Fecth Usernames with ID's for Select List.
+ */
+function _user_fetch() {
+  $query = db_select('users', 'u');
+  $query->fields('u', array('uid', 'name'));
+  $query->orderBy('name');
+  $result = $query->execute();
+  $users = array();
+  foreach ($result as $user) {
+    if ($user->uid) {
+      $users[$user->uid] = $user->name;
+    }
+  }
+  return $users;
+}
+
+function _path_check($path) {
+  $query = db_select('url_redirect', 'u');
+  $query->fields('u');
+  $query->condition('path', $path, '=');
+  $query->condition('status', 1, '=');
+  $result = $query->execute()->fetchAssoc();
+  return $result;
+}
