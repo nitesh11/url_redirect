@@ -45,6 +45,7 @@ function url_redirect_edit_form($form, &$form_state) {
       );
     }
     if ($check_form == 'User') {
+      $default_users = (array) json_decode($path_data['users']);
       $form['checked_for'] = array(
         '#type' => 'radios',
         '#options' => drupal_map_assoc(array(t('User'))),
@@ -58,6 +59,7 @@ function url_redirect_edit_form($form, &$form_state) {
         '#title' => t('Select Users.'),
         '#options' => $users,
         '#multiple' => TRUE,
+        '#default_value' => $default_users,
         '#suffix' => '</div>',
       );
     }
