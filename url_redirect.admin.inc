@@ -5,51 +5,65 @@ function url_redirect_settings_form($form, &$form_state) {
   $form['goto_list'] = array(
     '#markup' => l(t('Url Redirect List'), 'admin/config/administration/url_redirect/list'),
   );
+
   $form['url'] = array(
     '#type' => 'fieldset',
     '#title' => t('Url Redirect'),
-    '#collapsible' => TRUE, // Added
-    '#collapsed' => FALSE, // Added
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
     '#attached' => array(
       'js' => array(
         'vertical-tabs' => drupal_get_path('module', 'url_redirect') . '/js/url_redirect.js',
       ),
     ),
   );
+
   $form['url']['path'] = array(
     '#type' => 'textfield',
     '#title' => 'Path',
-    '#attributes' => array('placeholder' => 'Enter Path'),
+    '#attributes' => array(
+      'placeholder' => 'Enter Path',
+    ),
     '#required' => TRUE,
   );
+
   $form['url']['redirect_path'] = array(
     '#type' => 'textfield',
     '#title' => 'Redirect Path',
-    '#attributes' => array('placeholder' => 'Enter Redirect Path'),
+    '#attributes' => array(
+      'placeholder' => 'Enter Redirect Path',
+    ),
     '#required' => TRUE,
   );
-  $status = array(0 => 'Disabled', 1 => 'Enabled');
+
   $form['url']['checked_for'] = array(
     '#type' => 'radios',
     '#options' => drupal_map_assoc(array(t('Role'), t('User'))),
     '#title' => t('Select Redirect path for'),
     '#required' => TRUE,
   );
+
   $option = user_roles($membersonly = TRUE, $permission = NULL);
   $users = _user_fetch();
   $form['url']['roles'] = array(
     '#type' => 'select',
     '#options' => $option,
-    '#title' => t('Select Roles.'),
+    '#title' => t('Select Roles'),
     '#multiple' => TRUE,
   );
+
   $form['url']['user'] = array(
-    '#prefix' => '<div class="users-checkbox">',
     '#type' => 'select',
     '#title' => t('Select Users.'),
     '#options' => $users,
     '#multiple' => TRUE,
+    '#prefix' => '<div class="users-checkbox">',
     '#suffix' => '</div>',
+  );
+
+  $status = array(
+    0 => 'Disabled',
+    1 => 'Enabled',
   );
   $form['url']['status'] = array(
     '#type' => 'radios',
@@ -57,10 +71,12 @@ function url_redirect_settings_form($form, &$form_state) {
     '#title' => t('Status'),
     '#required' => TRUE,
   );
+
   $form['url']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Submit'),
   );
+
   $form['url']['reset'] = array(
     '#type' => 'submit',
     '#value' => t('Reset'),
@@ -70,6 +86,7 @@ function url_redirect_settings_form($form, &$form_state) {
 }
 
 function url_redirect_settings_form_validate($form, &$form_state) {
+
   // For settings page.
   if ($form_state['values']['op'] == 'Reset') {
     drupal_goto(current_path());
@@ -123,15 +140,18 @@ function url_redirect_settings_form_submit($form, &$form_state) {
     }
   }
   $status = $form_state['values']['status'];
-  $insert = db_insert('url_redirect')
-      ->fields(array(
-        'path' => check_plain($path),
-        'roles' => $role_values,
-        'users' => $users_values,
-        'redirect_path' => check_plain($redirect_path),
-        'status' => $status,
-        'check_for' => $checked_for,
-      ))
-      ->execute();
+
+  // Inserting the data in the url_redirect table.
+  db_insert('url_redirect')
+    ->fields(array(
+      'path' => check_plain($path),
+      'roles' => $role_values,
+      'users' => $users_values,
+      'redirect_path' => check_plain($redirect_path),
+      'status' => $status,
+      'check_for' => $checked_for,
+    ))
+    ->execute();
+
   drupal_goto('admin/config/administration/url_redirect/list');
 }
